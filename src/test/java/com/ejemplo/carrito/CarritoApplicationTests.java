@@ -9,4 +9,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class CarritoApplicationTests {
 
+	@Test
+	public void contextLoads() {
+	}
+
 }
