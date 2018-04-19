@@ -68,6 +68,7 @@ services:
       - jenkinsnet
       - testlinknet
     hostname: zalenium
+    container_name: zalenium
     privileged: true
     tty: true
     volumes:
