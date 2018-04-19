@@ -12,7 +12,6 @@ services:
       - jenkinsnet
     volumes:
      - "./jenkins/jobs:/var/jenkins_home/jobs/"
-     - "./jenkins/downloads:/var/jenkins_home/downloads"
     secrets:
      - jenkinsUsername
      - jenkinsPassword

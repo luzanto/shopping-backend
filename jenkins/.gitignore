@@ -1,5 +1,10 @@
+*
+!/.gitignore
+!/*.xml
+!/nextBuildNumber
 
-#Only get job configs and ignore other data
-!jobs/*
-jobs/*/*
-!jobs/*/config.xml
+!/jobs
+!/jobs/*
+!/jobs/*/*.xml
+/jobs/*/disk-usage.xml
+/jobs/*/builds
