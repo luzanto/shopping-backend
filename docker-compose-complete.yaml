@@ -2,7 +2,7 @@ version: '3.1'
  
 services:
   jenkins:
-    image: blackonyx/jenkins
+    image: blackonyx/jenkins:latest
     hostname: jenkins
     ports:
      - "8080:8080"
@@ -25,7 +25,7 @@ services:
       MYSQL_DATABASE: carrito_app
       MYSQL_ALLOW_EMPTY_PASSWORD: "no"
     volumes:
-     - carrito_data:/var/lib/mysql
+     - carritodb_data:/var/lib/mysql
     #command: >
      # start --max-connections=200 \
      #       --character-set-server=utf8mb4 \
@@ -169,7 +169,7 @@ volumes:
     driver: local
   sonardb_data:  
     driver: local
-  carrito_data:
+  carritodb_data:
     driver: local
   mantisdb_data:
     driver: local

@@ -2,9 +2,8 @@ version: '3.1'
  
 services:
   jenkins:
-    build:
-      context: .
-    image: blackonyx/jenkins
+    image: blackonyx/jenkins:latest
+    hostname: jenkins
     ports:
      - "8080:8080"
      - "50000:50000"
@@ -26,14 +25,16 @@ services:
       MYSQL_DATABASE: carrito_app
       MYSQL_ALLOW_EMPTY_PASSWORD: "no"
     volumes:
-     - carrito_data:/var/lib/mysql
+     - carritodb_data:/var/lib/mysql
     #command: >
      # start --max-connections=200 \
      #       --character-set-server=utf8mb4 \
      #       --collation-server=utf8mb4_unicode_ci
 
+
   sonarqube:
     image: sonarqube:6.7.3-alpine
+    hostname: sonarqube
     ports:
       - "9000:9000"
     networks:
@@ -55,9 +56,9 @@ services:
       - POSTGRES_USER=sonar
       - POSTGRES_PASSWORD=sonar
     volumes:
-      - postgresql:/var/lib/postgresql
+      - sonardb_lib:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - postgresql_data:/var/lib/postgresql/data
+      - sonardb_data:/var/lib/postgresql/data
 
 networks:
   sonarnet:
@@ -67,12 +68,19 @@ networks:
 
 volumes:
   sonarqube_conf:
+    driver: local
   sonarqube_data:
+    driver: local
   sonarqube_extensions:
+    driver: local
   sonarqube_bundled-plugins:
-  postgresql:
-  postgresql_data:  
-  carrito_data:
+    driver: local
+  sonardb_lib:
+    driver: local
+  sonardb_data:  
+    driver: local
+  carritodb_data:
+    driver: local
 
 secrets:
   jenkinsUsername:
