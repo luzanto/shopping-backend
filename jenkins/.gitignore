@@ -1,0 +1,5 @@
+
+#Only get job configs and ignore other data
+!jobs/*
+jobs/*/*
+!jobs/*/config.xml
