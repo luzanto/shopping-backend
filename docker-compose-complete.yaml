@@ -1,0 +1,184 @@
+version: '3.1'
+ 
+services:
+  jenkins:
+    image: blackonyx/jenkins
+    hostname: jenkins
+    ports:
+     - "8080:8080"
+     - "50000:50000"
+    networks:
+      - jenkinsnet
+    volumes:
+     - "./jenkins/jobs:/var/jenkins_home/jobs/"
+    secrets:
+     - jenkinsUsername
+     - jenkinsPassword
+
+  carritodb:
+    image: mysql:5.7.21
+    restart: always
+    networks:
+      - jenkinsnet
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: carrito_app
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+    volumes:
+     - carrito_data:/var/lib/mysql
+    #command: >
+     # start --max-connections=200 \
+     #       --character-set-server=utf8mb4 \
+     #       --collation-server=utf8mb4_unicode_ci
+
+
+  sonarqube:
+    image: sonarqube:6.7.3-alpine
+    hostname: sonarqube
+    ports:
+      - "9000:9000"
+    networks:
+      - jenkinsnet
+      - sonarnet
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+
+  sonardb:
+    image: postgres:10.3-alpine
+    restart: always
+    networks:
+      - sonarnet
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - sonardb_lib:/var/lib/postgresql
+      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
+      - sonardb_data:/var/lib/postgresql/data
+
+
+  zalenium:
+    image: "dosel/zalenium"
+    networks:
+      - jenkinsnet
+      - testlinknet
+    hostname: zalenium
+    privileged: true
+    tty: true
+    volumes:
+      - /tmp/videos:/home/seluser/videos
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    ports:
+      - "4444:4444"
+    command: >
+      start --desiredContainers 2
+            --maxDockerSeleniumContainers 8
+            --screenWidth 1280 --screenHeight 720
+            --timeZone "America/Santiago"
+            --videoRecordingEnabled true
+            --sauceLabsEnabled false
+            --browserStackEnabled false
+            --testingBotEnabled false
+            --startTunnel false
+
+
+  testlink:
+    image: bitnami/testlink:latest
+    hostname: testlink
+    networks:
+      - testlinknet
+      - jenkinsnet
+    environment:
+      - MARIADB_HOST=testlinkdb
+      - MARIADB_PORT_NUMBER=3306
+      - TESTLINK_DATABASE_USER=bn_testlink
+      - TESTLINK_DATABASE_NAME=bitnami_testlink
+      - ALLOW_EMPTY_PASSWORD=yes
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - testlink_data:/bitnami
+
+  testlinkdb:
+    image: bitnami/mariadb:latest
+    networks:
+      - testlinknet
+    restart: always
+    environment:
+      - MARIADB_USER=bn_testlink
+      - MARIADB_DATABASE=bitnami_testlink
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - testlinkdb_data:/bitnami
+
+
+  mantisbt:
+    image: vimagick/mantisbt:latest
+    hostname: mantisbt
+    networks:
+      - mantisnet
+      - testlinknet
+      - jenkinsnet
+    ports:
+      - "8989:80"
+
+  mantisdb:
+    image: mysql:latest
+    restart: always
+    networks:
+      - mantisnet
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bugtracker
+      - MYSQL_USER=mantisbt
+      - MYSQL_PASSWORD=mantisbt
+    volumes:
+     - mantisdb_data:/var/lib/mysql
+
+
+networks:
+  sonarnet:
+    driver: bridge
+  jenkinsnet:
+    driver: bridge
+  testlinknet:
+    driver: bridge
+  mantisnet:
+    driver: bridge
+
+volumes:
+  sonarqube_conf:
+    driver: local
+  sonarqube_data:
+    driver: local
+  sonarqube_extensions:
+    driver: local
+  sonarqube_bundled-plugins:
+    driver: local
+  sonardb_lib:
+    driver: local
+  sonardb_data:  
+    driver: local
+  carrito_data:
+    driver: local
+  mantisdb_data:
+    driver: local
+  testlinkdb_data:
+    driver: local
+  testlink_data:
+    driver: local
+
+secrets:
+  jenkinsUsername:
+    file: ./jenkins/secrets/jenkinsUsername
+  jenkinsPassword:
+    file: ./jenkins/secrets/jenkinsPassword
