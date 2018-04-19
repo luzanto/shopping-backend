@@ -4,8 +4,8 @@ Backend de la iteración 0. Mingeso 2018-1. Grupo 6 Seccion A-1
 ## Pasos para levantar el ambiente de integración continua.
 
 Obtener las herramientas necesarias:
-- [Instalar docker] (https://docs.docker.com/install/linux/docker-ce/ubuntu/).
-- [Instalar docker-compose] (https://docs.docker.com/compose/install/#install-compose).
+- [Instalar docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/).
+- [Instalar docker-compose](https://docs.docker.com/compose/install/#install-compose).
 
 Clonar el repositorio github:
 ```
