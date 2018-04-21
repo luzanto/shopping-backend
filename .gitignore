@@ -91,3 +91,5 @@ atlassian-ide-plugin.xml
 
 
 jenkins/jobs/carro-compras/workspace/
+
+jenkins/jobs/carro-compras/nextBuildNumber
