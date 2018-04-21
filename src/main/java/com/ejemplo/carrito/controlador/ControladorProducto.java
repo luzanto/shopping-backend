@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api")
@@ -63,5 +64,17 @@ public class ControladorProducto {
         return ResponseEntity.ok().build();
     }
 
+    public static int dsctoEfectivo (Producto producto, Boolean efectivo) {
+        // Se obtiene precio original del producto deseado
+        double dsct = 0.19;
+        int precioOriginal = producto.getPrecio();
+        Double precioFinal = precioOriginal-precioOriginal*dsct;
+        if (efectivo) {
+            return precioFinal.intValue();
+        }
+        else {
+            return precioOriginal;
+        }
+    }
 
 }
