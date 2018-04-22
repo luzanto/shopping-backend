@@ -62,31 +62,41 @@ services:
       - sonardb_data:/var/lib/postgresql/data
 
 
-  zalenium:
-    image: "dosel/zalenium"
+  tomcat:
+    image: blackonyx/tomcat8-alpine
+    hostname: tomcat
+    restart: always
     networks:
-      - jenkinsnet
-      - testlinknet
-    hostname: zalenium
-    container_name: zalenium
-    privileged: true
-    tty: true
-    volumes:
-      - /tmp/videos:/home/seluser/videos
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker
+      jenkinsnet
     ports:
-      - "4444:4444"
-    command: >
-      start --desiredContainers 2
-            --maxDockerSeleniumContainers 8
-            --screenWidth 1280 --screenHeight 720
-            --timeZone "America/Santiago"
-            --videoRecordingEnabled true
-            --sauceLabsEnabled false
-            --browserStackEnabled false
-            --testingBotEnabled false
-            --startTunnel false
+      - "8081:8080"
+
+
+#  zalenium:
+#    image: "dosel/zalenium"
+#    networks:
+#      - jenkinsnet
+#      - testlinknet
+#    hostname: zalenium
+#    container_name: zalenium
+#    privileged: true
+#    tty: true
+#    volumes:
+#      - /tmp/videos:/home/seluser/videos
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /usr/bin/docker:/usr/bin/docker
+#    ports:
+#      - "4444:4444"
+#    command: >
+#      start --desiredContainers 2
+#            --maxDockerSeleniumContainers 8
+#            --screenWidth 1280 --screenHeight 720
+#            --timeZone "America/Santiago"
+#            --videoRecordingEnabled true
+#            --sauceLabsEnabled false
+#            --browserStackEnabled false
+#            --testingBotEnabled false
+#            --startTunnel false
 
 
   testlink:
