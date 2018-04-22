@@ -21,13 +21,13 @@ node {
       }     
     )   
   }
-  stage('Tests unitarios') {
+  stage('Unit testing') {
     sh './gradlew test'
     // Encontrar la forma correcta de usar lo siguiente
     //junit '**/target/surefire-reports/TEST-*.xml'
     //archive 'target/*.jar'
    }
-   stage('Tests de integración') {
+   stage('Integration testing') {
     sh './gradlew integrationTest'
    }
 
