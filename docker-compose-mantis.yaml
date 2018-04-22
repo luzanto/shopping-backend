@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  mantisbt:
+    image: vimagick/mantisbt:latest
+    hostname: mantisbt
+    networks:
+      - mantisnet
+      - testlinknet
+      - jenkinsnet
+    ports:
+      - "8989:80"
+
+  mantisdb:
+    image: mysql:latest
+    restart: always
+    networks:
+      - mantisnet
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bugtracker
+      - MYSQL_USER=mantisbt
+      - MYSQL_PASSWORD=mantisbt
+    volumes:
+     - mantisdb_data:/var/lib/mysql
+
+volumes:
+  mantisdb_data:
+    driver: local
+
+networks:
+  sonarnet:
+    driver: bridge
+  jenkinsnet:
+    driver: bridge
+  testlinknet:
+    driver: bridge
+  mantisnet:
+    driver: bridge
