@@ -23,39 +23,11 @@ services:
       - "8080:8080"
 
 
-#  zalenium:
-#    image: "dosel/zalenium"
-#    networks:
-#      - tomcatnet
-#      - testlinknet
-#    hostname: zalenium
-#    container_name: zalenium
-#    privileged: true
-#    tty: true
-#    volumes:
-#      - /tmp/videos:/home/seluser/videos
-#      - /var/run/docker.sock:/var/run/docker.sock
-#      - /usr/bin/docker:/usr/bin/docker
-#    ports:
-#      - "4444:4444"
-#    command: >
-#      start --desiredContainers 2
-#            --maxDockerSeleniumContainers 8
-#            --screenWidth 1280 --screenHeight 720
-#            --timeZone "America/Santiago"
-#            --videoRecordingEnabled true
-#            --sauceLabsEnabled false
-#            --browserStackEnabled false
-#            --testingBotEnabled false
-#            --startTunnel false
-
-
   testlink:
     image: bitnami/testlink:latest
     hostname: testlink
     networks:
       - testlinknet
-      - tomcatnet
     ports:
       - "80:80"
       - "443:443"
@@ -89,8 +61,6 @@ services:
     hostname: mantisbt
     networks:
       - mantisnet
-      - testlinknet
-      - tomcatnet
     ports:
       - "8989:80"
 
@@ -109,8 +79,6 @@ services:
 
 
 networks:
-  sonarnet:
-    driver: bridge
   tomcatnet:
     driver: bridge
   testlinknet:
@@ -119,18 +87,6 @@ networks:
     driver: bridge
 
 volumes:
-  sonarqube_conf:
-    driver: local
-  sonarqube_data:
-    driver: local
-  sonarqube_extensions:
-    driver: local
-  sonarqube_bundled-plugins:
-    driver: local
-  sonardb_lib:
-    driver: local
-  sonardb_data:  
-    driver: local
   carritodb_data:
     driver: local
   mantisdb_data:
