@@ -1,18 +1,24 @@
+import com.bmuschko.gradle.cargo.convention.Deployable
+import com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote
+
 buildscript {
 	ext {
 		springBootVersion = '2.0.1.RELEASE'
 	}
 	repositories {
 		mavenCentral()
+		jcenter()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
+		classpath 'com.bmuschko:gradle-cargo-plugin:2.3'
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse-wtp'
+apply plugin: 'com.bmuschko.cargo'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
@@ -36,5 +42,24 @@ dependencies {
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('mysql:mysql-connector-java')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.boot:spring-boot-starter-test', 'junit:junit:4.12')
+
+	def cargoVersion = '1.4.5'
+	cargo "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion",
+			"org.codehaus.cargo:cargo-ant:$cargoVersion"
 }
+
+cargo {
+	containerId='tomcat7x'
+}
+
+task deployAppA(type: CargoRedeployRemote) {
+	description = "Deploys WAR to Tomcat ."  // description of task
+	hostname = 'localhost' // ip of the tomcat
+	port = 8083 // port at which tomcat is running
+	username = "tomcat" // username of tomcat
+	password = "tomcat"  // password of the tomcat
+	deployables = [
+			new Deployable(file: file('build/libs/carrito-0.0.1-SNAPSHOT.war'), context: 'carrito-0.0.1-SNAPSHOT')]
+}
+
