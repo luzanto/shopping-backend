@@ -30,6 +30,19 @@ configurations {
 	providedRuntime
 }
 
+test {
+	useJUnit {
+		exclude '**/*IntegrationTest.class'
+		exclude '**/*ApplicationTests.class'
+	}
+}
+
+task integrationTest(type: Test) {
+	useJUnit {
+		include '**/*IntegrationTest.class'
+	}
+}
+
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
