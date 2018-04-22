@@ -1,0 +1,147 @@
+version: '3.1'
+ 
+services:
+  carritodb:
+    image: mysql:5.7.21
+    restart: always
+    networks:
+      - tomcatnet
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: carrito_app
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+    volumes:
+     - carritodb_data:/var/lib/mysql
+
+  tomcat:
+    image: blackonyx/tomcat8-alpine
+    hostname: tomcat
+    restart: always
+    networks:
+      - tomcatnet
+    ports:
+      - "8080:8080"
+
+
+#  zalenium:
+#    image: "dosel/zalenium"
+#    networks:
+#      - tomcatnet
+#      - testlinknet
+#    hostname: zalenium
+#    container_name: zalenium
+#    privileged: true
+#    tty: true
+#    volumes:
+#      - /tmp/videos:/home/seluser/videos
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /usr/bin/docker:/usr/bin/docker
+#    ports:
+#      - "4444:4444"
+#    command: >
+#      start --desiredContainers 2
+#            --maxDockerSeleniumContainers 8
+#            --screenWidth 1280 --screenHeight 720
+#            --timeZone "America/Santiago"
+#            --videoRecordingEnabled true
+#            --sauceLabsEnabled false
+#            --browserStackEnabled false
+#            --testingBotEnabled false
+#            --startTunnel false
+
+
+  testlink:
+    image: bitnami/testlink:latest
+    hostname: testlink
+    networks:
+      - testlinknet
+      - tomcatnet
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - testlink_data:/bitnami
+    environment:
+      - MARIADB_HOST=testlinkdb
+      - MARIADB_PORT_NUMBER=3306
+      - TESTLINK_DATABASE_USER=bn_testlink
+      - TESTLINK_DATABASE_NAME=bitnami_testlink
+      - ALLOW_EMPTY_PASSWORD=yes
+      - TESTLINK_USERNAME=admin
+      - TESTLINK_PASSWORD=verysecretadminpassword
+      - TESTLINK_EMAIL=admin@example.com
+
+  testlinkdb:
+    image: bitnami/mariadb:latest
+    networks:
+      - testlinknet
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_testlink
+      - MARIADB_DATABASE=bitnami_testlink
+    volumes:
+      - testlinkdb_data:/bitnami
+      
+
+  mantisbt:
+    image: vimagick/mantisbt:latest
+    hostname: mantisbt
+    networks:
+      - mantisnet
+      - testlinknet
+      - tomcatnet
+    ports:
+      - "8989:80"
+
+  mantisdb:
+    image: mysql:latest
+    restart: always
+    networks:
+      - mantisnet
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bugtracker
+      - MYSQL_USER=mantisbt
+      - MYSQL_PASSWORD=mantisbt
+    volumes:
+     - mantisdb_data:/var/lib/mysql
+
+
+networks:
+  sonarnet:
+    driver: bridge
+  tomcatnet:
+    driver: bridge
+  testlinknet:
+    driver: bridge
+  mantisnet:
+    driver: bridge
+
+volumes:
+  sonarqube_conf:
+    driver: local
+  sonarqube_data:
+    driver: local
+  sonarqube_extensions:
+    driver: local
+  sonarqube_bundled-plugins:
+    driver: local
+  sonardb_lib:
+    driver: local
+  sonardb_data:  
+    driver: local
+  carritodb_data:
+    driver: local
+  mantisdb_data:
+    driver: local
+  testlinkdb_data:
+    driver: local
+  testlink_data:
+    driver: local
+
+secrets:
+  jenkinsUsername:
+    file: ./jenkins/secrets/jenkinsUsername
+  jenkinsPassword:
+    file: ./jenkins/secrets/jenkinsPassword

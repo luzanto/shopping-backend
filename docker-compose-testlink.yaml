@@ -1,18 +1,11 @@
 version: '3.1'
 
 services:
-  testlinkdb:
-    image: bitnami/mariadb:latest
-    restart: always
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - MARIADB_USER=bn_testlink
-      - MARIADB_DATABASE=bitnami_testlink
-    volumes:
-      - testlinkdb_data:/bitnami
-
   testlink:
     image: bitnami/testlink:latest
+    hostname: testlink
+    networks:
+      - testlinknet
     ports:
       - "80:80"
       - "443:443"
@@ -27,6 +20,22 @@ services:
       - TESTLINK_USERNAME=admin
       - TESTLINK_PASSWORD=verysecretadminpassword
       - TESTLINK_EMAIL=admin@example.com
+
+  testlinkdb:
+    image: bitnami/mariadb:latest
+    networks:
+      - testlinknet
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_testlink
+      - MARIADB_DATABASE=bitnami_testlink
+    volumes:
+      - testlinkdb_data:/bitnami
+
+networks:
+  testlinknet:
+    driver: bridge
 
 volumes:
   testlinkdb_data:
