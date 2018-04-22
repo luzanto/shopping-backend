@@ -67,7 +67,7 @@ services:
     hostname: tomcat
     restart: always
     networks:
-      jenkinsnet
+      - jenkinsnet
     ports:
       - "8081:8080"
 
