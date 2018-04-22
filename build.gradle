@@ -26,7 +26,7 @@ apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 
 group = 'com.ejemplo'
-version = '0.0.1-SNAPSHOT'
+version = '0.1'
 sourceCompatibility = 1.8
 
 repositories {
@@ -118,13 +118,13 @@ cargo {
 	containerId='tomcat7x'
 }
 
-task deployAppA(type: CargoRedeployRemote) {
+task deployApp(type: CargoRedeployRemote) {
 	description = "Deploys WAR to Tomcat ."  // description of task
-	hostname = 'localhost' // ip of the tomcat
-	port = 8083 // port at which tomcat is running
+	hostname = 'tomcat' // ip of the tomcat
+	port = 8081 // port at which tomcat is running
 	username = "tomcat" // username of tomcat
 	password = "tomcat"  // password of the tomcat
 	deployables = [
-			new Deployable(file: file('build/libs/carrito-0.0.1-SNAPSHOT.war'), context: 'carrito-0.0.1-SNAPSHOT')]
+			new Deployable(file: file('build/libs/carrito-0.1.war'), context: 'carrito-0.1')]
 }
 
