@@ -32,6 +32,6 @@ node {
    }
 
    stage('Deployment') {
-    sh './gradlew deployApp'
+    sh './gradlew deployApp --info'
    }
 }
