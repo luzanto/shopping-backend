@@ -60,12 +60,21 @@ task "integtest"(type: Test, dependsOn: integtestClasses) {
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoIntegTest.exec")
 	}
+
+	useJUnit {
+		include '**/*IntegrationTest.class'
+	}
 }
 
 test {
 	jacoco {
         destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
     }
+
+	useJUnit {
+		exclude '**/*IntegrationTest.class'
+		exclude '**/*ApplicationTests.class'
+	}
 }
 
 sonarqube {
