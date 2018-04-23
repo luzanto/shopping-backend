@@ -30,7 +30,7 @@ public class Producto {
     private String categoria;
 
     @Column(nullable = false)
-    private Integer precio;
+    private Integer precio; //Precio del producto
 
     public Long getId() {
         return id;
