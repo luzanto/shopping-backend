@@ -16,7 +16,7 @@ node {
         }
       }, "SonarQube analysis": {
         withSonarQubeEnv('SonarServer') {
-          sh './gradlew sonarqube --info '
+          sh './gradlew integTest sonarqube --info '
         }
       }     
     )   

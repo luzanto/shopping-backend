@@ -107,7 +107,7 @@ cargo {
 
 task deployApp(type: CargoRedeployRemote) {
 	description = "Deploys WAR to Tomcat ."  // description of task
-	hostname = 'tomcat' // ip of the tomcat
+	hostname = '198.199.88.101' // ip of the tomcat
 	port = 8080 // port at which tomcat is running
 	username = "tomcat" // username of tomcat
 	password = "tomcat"  // password of the tomcat
