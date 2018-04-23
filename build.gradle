@@ -29,8 +29,6 @@ group = 'com.ejemplo'
 version = '0.1'
 sourceCompatibility = 1.8
 
-
-
 repositories {
 	mavenCentral()
 }
@@ -60,20 +58,24 @@ task "integtest"(type: Test, dependsOn: integtestClasses) {
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacocoIntegTest.exec")
 	}
-
-	useJUnit {
-		include '**/*IntegrationTest.class'
-	}
 }
 
 test {
 	jacoco {
-        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-    }
-
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+	}
 	useJUnit {
 		exclude '**/*IntegrationTest.class'
 		exclude '**/*ApplicationTests.class'
+	}
+}
+
+task integrationTest(type: Test) {
+	useJUnit {
+		include '**/*IntegrationTest.class'
+	}
+	reports {
+		html.destination "$buildDir/reports/tests/integTest"
 	}
 }
 
@@ -92,7 +94,7 @@ dependencies {
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('mysql:mysql-connector-java')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-	testCompile('org.springframework.boot:spring-boot-starter-test', 'junit:junit:4.12')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
 
 	def cargoVersion = '1.4.5'
 	cargo "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion",
