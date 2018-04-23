@@ -28,7 +28,7 @@ node {
     //archive 'target/*.jar'
    }
    stage('Integration testing') {
-    sh './gradlew integtest'
+    sh './gradlew integrationTest'
    }
 
    stage('Deployment') {
